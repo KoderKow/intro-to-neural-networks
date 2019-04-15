@@ -1,15 +1,15 @@
 ---
-title: "Presentation Ninja"
-subtitle: "⚔<br/>with xaringan"
-author: "Yihui Xie"
-date: "2016/12/12 (updated: `r Sys.Date()`)"
+title: "Introduction to Nueral Networks"
+author: "Kyle Harris"
+date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
     lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
-      countIncrementalSlides: false
+      countIncrementalSlides: true
+      ratio: '16:9'
 ---
 
 background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
