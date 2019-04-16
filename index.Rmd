@@ -1,12 +1,14 @@
 ---
-title: "Introduction to Nueral Networks"
-author: "Kyle Harris"
-date: '`r format(Sys.Date(), "%B %d, %Y")`'
+title: "Introduction to Neural Networks"
+subtitle: "PBHL-B385 Contemporary Regression"
+author: "<br>Kyle Harris <br><i class='fab fa-twitter'></i> <i class='fab fa-instagram'></i> <i class='fab fa-github'></i> @KoderKow"
+date: "<br>Follow Along: **http://bit.ly/B385-NN**"
 output:
   xaringan::moon_reader:
     lib_dir: libs
-    css: ["custom.css", middlebury]
+    css: ["default", "metropolis", "metropolis-fonts", "custom.css"]
     nature:
+      ratio: 16:9
       highlightStyle: github
       highlightLines: true
       slideNumberFormat: |
@@ -18,16 +20,22 @@ output:
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
+library(bsplus)
+library(knitr)
+library(shiny)
 ```
 
-background-image: url("https://thumbs.gfycat.com/EnviousNiftyCorydorascatfish-size_restricted.gif")
-class: center, top, inverse
+class: inverse
 
 # What Are Neural Networks?
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
-.footnote[
-[1] [Image from GyfCat](https://gfycat.com/enviousniftycorydorascatfish-three-blue-one-brown-machines-learning)
-]
+<center>
+  <figure>
+    <img src="https://thumbs.gfycat.com/EnviousNiftyCorydorascatfish-size_restricted.gif"/ width=75%>
+    <figcaption><a href="https://www.youtube.com/watch?v=aircAruvnKk">Image Source</a></figcaption>
+  </figure>
+</center>
 
 ---
 # What Are Neural Networks?
@@ -48,14 +56,78 @@ class: center, top, inverse
 
 --
 
-- The brain model of connected neurons, first suggested by McCulloch and Pitts (1943)<sup>2</sup>, is too simplistic given more recent research
+- The brain model of connected neurons, first suggested by McCulloch and Pitts (1943)<sup>1</sup>, is too simplistic given more recent research
 
 .footnote[
-[2] [McCulloch and Pitts (1943)](http://wwwold.ece.utep.edu/research/webfuzzy/docs/kk-thesis/kk-thesis-html/node12.html)
+[1] [McCulloch and Pitts (1943)](http://wwwold.ece.utep.edu/research/webfuzzy/docs/kk-thesis/kk-thesis-html/node12.html)
 ]
 
 ---
 
 # What Are Neural Networks?
 
-- As with artificial intelligence and the sentient takeover, the promise of NNs is not matched by the reality of their performance
+- As with artificial intelligence and the sentient takeover, the promise of neural networks is not matched by the reality of their performance. Atleast for now..
+
+--
+
+<center>
+  <figure>
+    <img src="https://img.buzzfeed.com/buzzfeed-static/static/2015-04/1/17/enhanced/webdr07/anigif_enhanced-29933-1427925503-3.gif" width=20% />
+    <figcaption><a href="https://www.buzzfeed.com/norbertobriceno/01101010101001001">Image Source</a></figcaption>
+  </figure>
+</center>
+
+--
+
+- Neural networks have various purposes:
+  - Biological models
+  - Hardware implementation for adaptive contorl
+  - Many more!
+
+--
+
+- We are inerested in the data analysis application of neural networks:
+  - Classification
+  - Clustering Methods
+  - **Regression Methods**
+      
+---
+
+# Quick Neuron Structure
+
+.right-column[
+<center>
+  <figure>
+    <img src="https://3c1703fe8d.site.internapcdn.net/newman/csz/news/800/2018/2-whyareneuron.jpg" width=80% />
+    <figcaption><a href="https://medicalxpress.com/news/2018-07-neuron-axons-spindly-theyre-optimizing.html">Image Source</a></figcaption>
+  </figure>
+</center>
+]
+
+.left-column[
+- Dendrites receive signals
+- Cell body sums all the inputs signals to generate output
+- Axon terminals is the final output<sup>2</sup>
+]
+
+.footnote[
+[2] [DataCamp: Neural Network Models](https://www.datacamp.com/community/tutorials/neural-network-models-r)
+]
+
+
+---
+
+# Visual Representation of Neural Networks
+
+<center>
+  <figure>
+    <img src="https://cdn-images-1.medium.com/max/1600/1*UA30b0mJUPYoPvN8yJr2iQ.jpeg" width=40% />
+    <figcaption><a href="https://cdn-images-1.medium.com/max/1600/1*UA30b0mJUPYoPvN8yJr2iQ.jpeg">Image Source</a></figcaption>
+  </figure>
+</center>
+
+- Here we can see how a neural network resembles a neuron
+
+---
+
+

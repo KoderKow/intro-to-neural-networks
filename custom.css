@@ -31,3 +31,16 @@ content: "";
     background-size: contain;
     background-image: url("https://iupuijags.com/favicon.ico");
 }
+
+span {
+    position: relative;
+}
+
+span.imgText img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 50px;
+    width: 50px;
+}
+
