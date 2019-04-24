@@ -5,12 +5,14 @@ author: "<br>Kyle Harris <br><i class='fab fa-twitter'></i> <i class='fab fa-ins
 date: "<br>Follow Along: **http://bit.ly/B385-NN**"
 output:
   xaringan::moon_reader:
+    fig_catption: yes
     lib_dir: libs
     css: ["default", "metropolis", "metropolis-fonts", "custom.css"]
     nature:
       ratio: 16:9
       highlightStyle: github
       highlightLines: true
+      highlightSpans: true
       slideNumberFormat: |
         <div class="progress-bar-container">
           <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
@@ -18,33 +20,45 @@ output:
         </div>
 ---
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
+library(nnet)
+library(tidyverse)
+library(ggthemes)
+library(glue)
 options(htmltools.dir.version = FALSE)
-library(bsplus)
-library(knitr)
-library(shiny)
 ```
 
-class: inverse
+# Overview
 
-# What Are Neural Networks?
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
-<center>
-  <figure>
-    <img src="https://thumbs.gfycat.com/EnviousNiftyCorydorascatfish-size_restricted.gif"/ width=75%>
-    <figcaption><a href="https://www.youtube.com/watch?v=aircAruvnKk">Image Source</a></figcaption>
-  </figure>
-</center>
+- [What Are Neural Networks?](#what_nn)
+- [Structure of a Neuron](#neuron)
+- [Visual Representation of Neural Networks](#visual_nn)
+- [Layers of a NN](#layers)
+- [Feedforward and Feedback Neural Networks](#feed)
+- [Neural Network Application - The Faraway Way](#application)
+  - [Examine the Estimated Weights](#examine_weight)
+  - [Drawbacks of Our NN Model](#drawbacks)
+  - [Weight Interpretation](#weight_interpretation)
+  - [Improving the Fit](#improve_fit)
+  - [Demonstration Wrap-Up](#wrap_up)
+  - [Final Model Fit](#final_model)
+- [Conclusion](#conclusion)
+  
+Follow Along: **http://bit.ly/B385-NN**
 
 ---
+
+name: what_nn
+
 # What Are Neural Networks?
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
 - A Neural network, or Artificial Neural Network, is a set of algorithms, modeled loosely after the human brain to help recognize patterns
 
 --
 
-- The brain has about $1.5 \times 10^{10}$ neurons each with 10 to 104 connections called synapses. The speed of messages between neurons is about 100 m/sec which is much slower than CPU speed. 
+- The brain has about $1.5 \times 10^{10}$ neurons each with 10 to 104 connections called synapses. The speed of messages between neurons is about 100 m/sec which is much slower than CPU speed
 
 --
 
@@ -79,21 +93,23 @@ class: inverse
 
 --
 
-- Neural networks have various purposes:
-  - Biological models
-  - Hardware implementation for adaptive contorl
-  - Many more!
+Neural networks have various purposes:
+- Biological models
+- Hardware implementation for adaptive contorl
+- Many more!
 
 --
 
-- We are inerested in the data analysis application of neural networks:
-  - Classification
-  - Clustering Methods
-  - **Regression Methods**
+We are inerested in the data analysis application of neural networks:
+- Classification
+- Clustering Methods
+- Regression Methods
       
 ---
 
-# Quick Neuron Structure
+name: neuron
+
+# Structure of a Neuron
 
 .right-column[
 <center>
@@ -104,18 +120,25 @@ class: inverse
 </center>
 ]
 
+--
+
 .left-column[
-- Dendrites receive signals
-- Cell body sums all the inputs signals to generate output
-- Axon terminals is the final output<sup>2</sup>
+
+- *Dendrites* receive signals
+
+- *Cell body* sums up the inputs of the signals to generate output
+
+- *Axon terminals* is the final output<sup>2</sup>
+
 ]
 
 .footnote[
 [2] [DataCamp: Neural Network Models](https://www.datacamp.com/community/tutorials/neural-network-models-r)
 ]
 
-
 ---
+
+name: visual_nn
 
 # Visual Representation of Neural Networks
 
@@ -128,6 +151,502 @@ class: inverse
 
 - Here we can see how a neural network resembles a neuron
 
+--
+
+- Neural networks are collections of thousands  of these simple processing units that together perform useful computations
+
+--
+
+.pull-left[
+
+**Inputs $x_1, x_2, \dots, x_n$**: independent variables
+
+**Weights $w_1, w_2, \dots, w_n$:** learns the weights from the data
+
+**Bias $b$:** the intercept
+
+]
+
+--
+
+.pull-right[
+**Activation Function $f$:** defines the output of the nueron
+- *Identity Function:* linear fit
+- *Sigmoid Function:* logistic fit, where $y$ is binary
+- *ReLu (rectified linear fit):* linear fit, outputs 0 for negative values
+]
+
 ---
 
+name: layers
 
+# Layers of a NN
+
+<center>
+  <img src="https://i.stack.imgur.com/Kc50L.jpg" width = 40%/>
+</center>
+
+**Input Layer:** the raw data, think of each "node" as a variable in our data
+
+--
+
+**Hidden Layer:** this is where the "black magic" happens
+
+--
+
+- Each layer is focused on learning about the data
+- We can think about each layer is learning about an aspect of the data
+- Larger and more complex data may require multiple hidden layers
+  
+--
+
+**Output Layer:** the final output. This is generally a single output of the input(s)
+
+<br>
+
+.footnote[
+[3] [Stack Overflow](https://stackoverflow.com/questions/35345191/what-is-a-layer-in-a-neural-network)
+]
+
+---
+
+name: feed
+
+# Feedforward and Feedback Neural Networks
+
+.pull-left[
+<h3>Feedforward</h3>
+- Signal goes from input to output
+- No loops
+<br><br>
+.center[
+<img src="https://thumbs.gfycat.com/EnviousNiftyCorydorascatfish-size_restricted.gif" />
+]
+]
+
+--
+
+.pull-right[
+<h3>Feedback</h3>
+- The neural network is recursive
+- These networks go in cycles and the data goes in both directions<sup>4</sup>
+.center[
+<img src="https://thumbs.gfycat.com/MiniatureDependentCob-size_restricted.gif"/>
+]
+]
+
+.footnote[
+[4] [3Blue1Brown](https://www.youtube.com/watch?v=aircAruvnKk)
+]
+
+---
+
+name: application
+
+# Neural Network Application - The Faraway Way
+
+```{r}
+library(nnet)
+data(ozone, package = "faraway")
+```
+
+- We will start with three variables for demonstrative purposes
+- We fit a feed-forward NN with one hidden layer containing two units with a linear output unit:
+
+--
+
+```{r, results="hidden", message=FALSE, error=FALSE}
+set.seed(2019)
+nnet_model <- nnet(O3 ~ temp + ibh + ibt, ozone,
+                   size = 2, linout = TRUE, trace = FALSE)
+```
+
+- nnet() fits a single-hidden-layer neural network
+- `formula = O3 ~ temp + ibh + ibt`
+- `data = ozone`
+- `size = 2`: number of neurons in the hidden layer (this can be optimized)
+
+---
+
+# NN Application
+
+- If you repeat this, your result may differ slightly because of the random starting point of the algorithm, but you will likely get a similar result
+
+--
+
+- The RSS of 21,115 is equal to $\sum_i(y_i - \hat{y})^2$, so the fit is not any better than the null model
+
+--
+
+```{r}
+sum((ozone$O3 - mean(ozone$O3))^2)
+```
+
+--
+
+- The problem lies with the initial selection of weights. It is hard to do this well when the variables have very different scales
+
+```{r}
+scale_ozone <- scale(ozone)
+```
+
+--
+
+- Due to the random starting point the algorithm uses it may not actually converge. We will fit the model 100 times and pick the one that has the lowest RSS
+
+---
+
+# NN Application
+
+```{r, results="hide"}
+set.seed(2019)
+## fit 100 nn models
+results <- 1:100 %>%
+  map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE))
+## get the index of the model with the lowest RSS
+best_model_index <- results %>%
+  map_dbl(~.x$value) %>%
+  which.min()
+## select best model
+best_nn <- results[[best_model_index]]
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.height=4, fig.align="center"}
+results %>%
+  map_dbl(~.x$value) %>% 
+  as_tibble() %>% 
+  ggplot(aes(value)) +
+    geom_histogram(fill = "red", color = "black", alpha = 0.8) +
+    theme_gdocs() +
+    labs(x = "RSS", y = "Count")
+```
+
+---
+
+# NN Application
+
+```{r}
+best_nn
+```
+
+```{r, echo=FALSE}
+glue("Best Value: {round(best_nn$value, 4)}")
+```
+
+- Our `best_nn` model has 11 parameters or weights (The parameters are shown on the next slide)
+  
+--
+
+- For each of the parameteres there is optimization that occurs
+
+--
+
+- The surface optimization problem has multiple peaks and valleys
+
+--
+
+- The model can converge on one of these minimums
+
+--
+
+- This is why we run our model 100 times to test out multiple random starting points for our model, to hopefully find the global minimum!
+
+---
+
+name: examine_weight
+
+# Examine the Estimated Weights
+
+```{r}
+summary(best_nn)
+```
+
+--
+
+.pull-left[
+- $b$: bias
+- $i_x$: input where x is the index of the variable
+- $h_y$: hidden neuron where y is the index of the hidden neuron
+- $o$: output
+- $i_1 \rightarrow h_1$: refers to the link between input 1 and the first hidden neuron
+- $b \rightarrow o$: is a one skip-layer connection, from the bias to the output
+]
+
+.pull-right[
+<center>
+  <figure>
+    <img src="https://memegenerator.net/img/instances/68631115/neural-networks-so-hot-right-now.jpg" width = 60%/>
+    <figcaption><a href="https://memegenerator.net/">Image Source</a></figcaption>
+  </figure>
+</center>
+]
+
+---
+
+name: drawbacks
+
+# Drawbacks of a NN Model
+
+- Parameters are uninterpretable
+
+--
+
+- Not based on a probability models that expresses the structure and variation
+  - No standard errors
+  - Some inference is possible with bootstrapping
+  
+--
+
+- We can get an $R^2$ estimate:
+
+```{r}
+1 - best_nn$value / sum((scale_ozone[, 1] - mean(scale_ozone[, 1]))^2)
+```
+
+- This is a similar to the additive model fit for these predictors that Faraway fits in previous chapters
+
+---
+
+name: weight_interpretation
+
+# Weight Interpretation
+
+```{r, echo=FALSE, fig.height=4, fig.align="center"}
+par(mfrow=c(1,3))
+ozmeans <- colMeans(ozone)
+ozscales <- apply(ozone,2,sd)
+xx <- expand.grid(temp=seq(-3,3,0.1),ibh=0,ibt=0)
+plot(xx$temp*ozscales["temp"]+ozmeans["temp"], predict(best_nn,new=xx)*ozscales["O3"]+ozmeans["O3"], xlab="Temp", ylab="O3", type="l")
+xx <- expand.grid(temp=0,ibh=seq(-3,3,0.1),ibt=0)
+plot(xx$ibh*ozscales["ibh"]+ozmeans["ibh"], predict(best_nn,new=xx)*ozscales["O3"]+ozmeans["O3"], xlab="IBH", ylab="O3", type="l")
+xx <- expand.grid(temp=0,ibh=0,ibt=seq(-3,3,0.1))
+plot(xx$ibt*ozscales["ibt"]+ozmeans["ibt"], predict(best_nn,new=xx)*ozscales["O3"]+ozmeans["O3"],xlab="IBT",ylab="O3", type="l")
+```
+
+- Although the NN weights may be difficult to interpret, we can get some sense of the effect of the predictors by observing the marginal effect of changes in one or more predictor as other predictors are held fixed
+
+--
+
+- Here, we vary each predictor individually while keeping the other predictors fixed at their mean values
+
+--
+
+- Because the data has been centered and scaled for the NN fitting, we need to restore the original scales
+
+
+---
+
+# Weight Interpretation
+
+```{r, echo=FALSE, fig.height=4, fig.align="center"}
+par(mfrow=c(1,3))
+ozmeans <- colMeans(ozone)
+ozscales <- apply(ozone,2,sd)
+xx <- expand.grid(temp=seq(-3,3,0.1),ibh=0,ibt=0)
+plot(xx$temp*ozscales["temp"]+ozmeans["temp"], predict(best_nn,new=xx)*ozscales["O3"]+ozmeans["O3"], xlab="Temp", ylab="O3", type="l")
+xx <- expand.grid(temp=0,ibh=seq(-3,3,0.1),ibt=0)
+plot(xx$ibh*ozscales["ibh"]+ozmeans["ibh"], predict(best_nn,new=xx)*ozscales["O3"]+ozmeans["O3"], xlab="IBH", ylab="O3", type="l")
+xx <- expand.grid(temp=0,ibh=0,ibt=seq(-3,3,0.1))
+plot(xx$ibt*ozscales["ibt"]+ozmeans["ibt"], predict(best_nn,new=xx)*ozscales["O3"]+ozmeans["O3"],xlab="IBT",ylab="O3", type="l")
+```
+
+- As seen in the plots there are large discontinuities in the lines plots. This does not follow the linear trend we are expecting
+
+--
+
+- Looking back at the weights of `summary(best_nn)` we can see that some weights have extremely large values despite the scaling of the data
+  - $i_2 \rightarrow h_2 = 63.10$
+  - This means there is a lot of variability in this neuron
+  - This is analogous to the collinearity problem in linear regression
+  
+--
+
+- The NN is choosing these large values to optimize the fit
+
+---
+
+name: improve_fit
+
+# Improving the Fit
+
+- We can use a penalty function, as with smoothing splines, to obtain a more stable fit.
+- Instead of minimizing MSE, we minimize: $MSE + \lambda \sum\limits_{i} w_i^2$
+
+--
+
+- We can introduce a *weight decay* to our nueral network, this is a similar approach we take with ridge regression
+
+--
+
+- Lets set $\lambda = 0.001$ and create 100 models again
+
+```{r, eval=FALSE}
+set.seed(2019)
+## fit 100 nn models
+results_decay <- 1:100 %>%
+  map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, `decay = 0.001`))
+## get the index of the model with the lowest RSS
+best_decay_index <- results_decay %>%
+  map_dbl(~.x$value) %>%
+  which.min()
+## select best model
+best_decay <- results[[best_decay_index]]
+```
+
+--
+
+```{r, echo=FALSE}
+set.seed(2019)
+## fit 100 nn models
+results_decay <- 1:100 %>%
+  map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, decay = 0.001))
+## get the index of the model with the lowest RSS
+best_decay_index <- results_decay %>%
+  map_dbl(~.x$value) %>%
+  which.min()
+## select best model
+best_decay <- results[[best_decay_index]]
+```
+
+---
+
+# Improving the Fit
+
+```{r, eval=FALSE}
+best_decay$value
+```
+
+```{r, echo=FALSE}
+round(best_decay$value, 4)
+```
+
+- Our previous value was `r round(best_nn$value, 4)`, our new RSS is a little bit higher. This is expected because we are sacrificing some of the fit for a more stable result
+
+--
+
+.pull-left[
+```{r, echo=FALSE, fig.height=4, fig.align="center"}
+par(mfrow=c(1,3))
+ozmeans <- colMeans(ozone)
+ozscales <- apply(ozone,2,sd)
+xx <- expand.grid(temp=seq(-3,3,0.1),ibh=0,ibt=0)
+plot(xx$temp*ozscales["temp"]+ozmeans["temp"], predict(best_decay,new=xx)*ozscales["O3"]+ozmeans["O3"], xlab="Temp", ylab="O3", type="l")
+xx <- expand.grid(temp=0,ibh=seq(-3,3,0.1),ibt=0)
+plot(xx$ibh*ozscales["ibh"]+ozmeans["ibh"], predict(best_decay,new=xx)*ozscales["O3"]+ozmeans["O3"], xlab="IBH", ylab="O3", type="l")
+xx <- expand.grid(temp=0,ibh=0,ibt=seq(-3,3,0.1))
+plot(xx$ibt*ozscales["ibt"]+ozmeans["ibt"], predict(best_decay,new=xx)*ozscales["O3"]+ozmeans["O3"],xlab="IBT",ylab="O3", type="l")
+```
+]
+
+.pull-right[
+<center>
+  <figure>
+    <img src="https://media1.tenor.com/images/154e8427624e163c030970a795b6f169/tenor.gif?itemid=5143620" />
+    <figcaption><a href="https://tenor.com/">Image Source</a></figcaption>
+  </figure>
+</center>
+]
+
+---
+
+name: wrap_up
+
+# Demonstration Wrap-Up
+
+```{r}
+summary(best_decay)
+```
+
+- The weights of the second row are not as extreme now
+
+--
+
+- There is not a way to assess significance of any of the variables
+
+--
+
+- NN's do have interactions built in and these can be observed by the method we used before by varying two variables in our model at a time
+
+---
+
+name: final_model
+
+# Final Model Fit
+
+```{r}
+set.seed(2019)
+## fit 100 nn models
+results <- 1:100 %>%
+  map(~nnet(O3 ~ ., scale_ozone, size = 4, linout = TRUE, trace = FALSE))
+## get the index of the model with the lowest RSS
+best_model_index <- results_decay %>%
+  map_dbl(~.x$value) %>%
+  which.min()
+## select best model
+best_model <- results[[best_model_index]]
+best_model
+```
+
+---
+
+# Final Model Fit
+
+```{r}
+summary(best_model)
+```
+
+$R^2$ estimate:
+
+```{r}
+1 - best_model$value / sum((scale_ozone[,1] - mean(scale_ozone))^2)
+```
+
+---
+
+name: conclusion
+
+# Conclusion
+
+- NN's cannot be used for inference
+
+--
+
+- Flexible, Easy to fit to large complex data
+
+--
+
+- Can be easily over fit
+
+--
+
+- Truly a "black box", plots only give a rough idea of what is happening with our data
+
+--
+
+- Lacks the diagnostics, model selection, and theory
+
+--
+
+- Initially developed to address real life issues, not statistical issues
+
+--
+
+- "NNs can outperform their statistical competitors for some problems provided they are carefully used. However, one should not be fooled by the evocative name, as NNs are just another tool in the box."<sup>5</sup>
+
+.footnote[
+[5] [Faraway: Extending the Linear Model with R](https://www.amazon.com/Extending-Linear-Model-Generalized-Nonparametric/dp/149872096X)
+]
+
+---
+
+# Thanks!
+
+.center[
+<figure>
+    <img src="https://media.giphy.com/media/6tHy8UAbv3zgs/giphy.gif" />
+    <figcaption><a href="https://giphy.com/explore/media">Image Source</a></figcaption>
+  </figure>
+]
+
+## Source Code for Slides
+- https://github.com/KoderKow/B385-nerual-networks

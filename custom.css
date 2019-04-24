@@ -44,3 +44,6 @@ span.imgText img {
     width: 50px;
 }
 
+.remark-code-line {
+  background-color: #e7e8e2;
+}
