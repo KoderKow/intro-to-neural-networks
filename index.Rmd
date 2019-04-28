@@ -268,9 +268,9 @@ data(ozone, package = "faraway")
 --
 
 ```{r, results="hidden", message=FALSE, error=FALSE}
-set.seed(1991)
+set.seed(2019)
 nnet_model <- nnet(O3 ~ temp + ibh + ibt, ozone,
-                   size = 2, linout = TRUE, trace = TRUE)
+                   size = 2, linout = TRUE, trace = FALSE)
 ```
 
 - nnet() fits a single-hidden-layer neural network
@@ -278,7 +278,7 @@ nnet_model <- nnet(O3 ~ temp + ibh + ibt, ozone,
 - `data = ozone`: data where the formula variables reside
 - `size = 2`: number of neurons in the hidden layer (this can be optimized)
 - `linout = TRUE`: tells the model that it will have lienar output units
-- `trace = TRUE`: prints out optimization information
+- `trace = FALSE`: hides the printed out optimization information
 
 ---
 
@@ -288,7 +288,14 @@ nnet_model <- nnet(O3 ~ temp + ibh + ibt, ozone,
 
 --
 
-- The RSS of 21,115 is equal to $\sum_i(y_i - \hat{y})^2$, so the fit is not any better than the null model
+```{r, echo=FALSE}
+rss_value <- round(nnet_model$value, 2)
+glue("RSS Value: {rss_value}")
+```
+
+--
+
+- The RSS of 21099.4 is almost equal to $\sum_i(y_i - \hat{y})^2$, so the fit is not any better than the null model
 
 --
 
@@ -313,7 +320,7 @@ scale_ozone <- scale(ozone)
 # NN Application
 
 ```{r, results="hide"}
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results <- 1:100 %>%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE))
@@ -349,7 +356,7 @@ best_nn
 ```
 
 ```{r, echo=FALSE}
-glue("Best Value: {round(best_nn$value, 4)}")
+glue("Best RSS Value: {round(best_nn$value, 4)}")
 ```
 
 - Our `best_nn` model has 11 parameters or weights (The parameters are shown on the next slide)
@@ -430,7 +437,7 @@ name: weight_interpretation
 
 # Weight Interpretation
 
-```{r, echo=FALSE, fig.height=4, fig.align="center"}
+```{r, echo=FALSE, fig.height=3, fig.align="center"}
 par(mfrow=c(1,3))
 ozmeans <- colMeans(ozone)
 ozscales <- apply(ozone,2,sd)
@@ -457,7 +464,7 @@ plot(xx$ibt*ozscales["ibt"]+ozmeans["ibt"], predict(best_nn,new=xx)*ozscales["O3
 
 # Weight Interpretation
 
-```{r, echo=FALSE, fig.height=4, fig.align="center"}
+```{r, echo=FALSE, fig.height=3, fig.align="center"}
 par(mfrow=c(1,3))
 ozmeans <- colMeans(ozone)
 ozscales <- apply(ozone,2,sd)
@@ -489,6 +496,9 @@ name: improve_fit
 # Improving the Fit
 
 - We can use a penalty function, as with smoothing splines, to obtain a more stable fit.
+
+--
+
 - Instead of minimizing MSE, we minimize: $MSE + \lambda \sum\limits_{i} w_i^2$
 
 --
@@ -500,7 +510,7 @@ name: improve_fit
 - Lets set $\lambda = 0.001$ and create 100 models again
 
 ```{r, eval=FALSE}
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results_decay <- 1:100 %>%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, `decay = 0.001`))
@@ -512,10 +522,8 @@ best_decay_index <- results_decay %>%
 best_decay <- results[[best_decay_index]]
 ```
 
---
-
 ```{r, echo=FALSE}
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results_decay <- 1:100 %>%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, decay = 0.001))
@@ -593,7 +601,7 @@ name: final_model
 # Final Model Fit
 
 ```{r}
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results <- 1:100 %>%
   map(~nnet(O3 ~ ., scale_ozone, size = 4, linout = TRUE, trace = FALSE))

@@ -261,16 +261,9 @@ data(ozone, package = "faraway")
 
 
 ```r
-set.seed(1991)
+set.seed(2019)
 nnet_model &lt;- nnet(O3 ~ temp + ibh + ibt, ozone,
-                   size = 2, linout = TRUE, trace = TRUE)
-```
-
-```
-## # weights:  11
-## initial  value 67218.997304 
-## final  value 21115.406061 
-## converged
+                   size = 2, linout = TRUE, trace = FALSE)
 ```
 
 - nnet() fits a single-hidden-layer neural network
@@ -278,7 +271,7 @@ nnet_model &lt;- nnet(O3 ~ temp + ibh + ibt, ozone,
 - `data = ozone`: data where the formula variables reside
 - `size = 2`: number of neurons in the hidden layer (this can be optimized)
 - `linout = TRUE`: tells the model that it will have lienar output units
-- `trace = TRUE`: prints out optimization information
+- `trace = FALSE`: hides the printed out optimization information
 
 ---
 
@@ -288,7 +281,14 @@ nnet_model &lt;- nnet(O3 ~ temp + ibh + ibt, ozone,
 
 --
 
-- The RSS of 21,115 is equal to `\(\sum_i(y_i - \hat{y})^2\)`, so the fit is not any better than the null model
+
+```
+## RSS Value: 21099.4
+```
+
+--
+
+- The RSS of 21099.4 is almost equal to `\(\sum_i(y_i - \hat{y})^2\)`, so the fit is not any better than the null model
 
 --
 
@@ -320,7 +320,7 @@ scale_ozone &lt;- scale(ozone)
 
 
 ```r
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results &lt;- 1:100 %&gt;%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE))
@@ -333,8 +333,8 @@ best_nn &lt;- results[[best_model_index]]
 ```
 
 &lt;center&gt;
-<div id="htmlwidget-c0a5fadf99a64a9b5312" style="width:504px;height:288px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c0a5fadf99a64a9b5312">{"x":{"data":[{"orientation":"v","width":[0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729685,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729685,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729685,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657,0.167401497729657],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[91.7360207558604,91.90342225359,92.0708237513197,92.2382252490494,92.4056267467791,92.5730282445087,92.7404297422384,92.9078312399681,93.0752327376977,93.2426342354274,93.4100357331571,93.5774372308868,93.7448387286164,93.9122402263461,94.0796417240758,94.2470432218055,94.4144447195351,94.5818462172648,94.7492477149945,94.9166492127241,95.0840507104538,95.2514522081835,95.4188537059132,95.5862552036428,95.7536567013725,95.9210581991022,96.0884596968318,96.2558611945615,96.4232626922912,96.5906641900209],"y":[7,1,0,0,0,0,0,0,0,0,0,1,6,1,0,0,1,0,0,4,5,41,4,3,2,7,2,0,14,1],"text":["count:  7<br />value: 91.73602","count:  1<br />value: 91.90342","count:  0<br />value: 92.07082","count:  0<br />value: 92.23823","count:  0<br />value: 92.40563","count:  0<br />value: 92.57303","count:  0<br />value: 92.74043","count:  0<br />value: 92.90783","count:  0<br />value: 93.07523","count:  0<br />value: 93.24263","count:  0<br />value: 93.41004","count:  1<br />value: 93.57744","count:  6<br />value: 93.74484","count:  1<br />value: 93.91224","count:  0<br />value: 94.07964","count:  0<br />value: 94.24704","count:  1<br />value: 94.41444","count:  0<br />value: 94.58185","count:  0<br />value: 94.74925","count:  4<br />value: 94.91665","count:  5<br />value: 95.08405","count: 41<br />value: 95.25145","count:  4<br />value: 95.41885","count:  3<br />value: 95.58626","count:  2<br />value: 95.75366","count:  7<br />value: 95.92106","count:  2<br />value: 96.08846","count:  0<br />value: 96.25586","count: 14<br />value: 96.42326","count:  1<br />value: 96.59066"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(255,0,0,0.7)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":56.5147364051474,"r":7.97011207970112,"b":49.813200498132,"l":43.8356164383562},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022},"title":{"text":"Distribution of RSS from 100 Model Fits","font":{"color":"rgba(117,117,117,1)","family":"sans","size":26.5670402656704},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[91.401217760401,96.9254671854802],"tickmode":"array","ticktext":["92","93","94","95","96"],"tickvals":[92,93,94,95,96],"categoryorder":"array","categoryarray":["92","93","94","95","96"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.98505603985056,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.724555643609193,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.724555643609193,"zeroline":false,"anchor":"y","title":{"text":"RSS","font":{"color":"rgba(102,102,102,1)","family":"sans","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2.05,43.05],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.98505603985056,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.724555643609193,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(102,102,102,1)","family":"sans","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"transparent","width":0.724555643609193,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":2.06156048675734,"font":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false,"collaborate":false,"displaylogo":false,"modeBarButtonsToRemove":["sendDataToCloud","zoom2d","pan2d","select2d","lasso2d","zoomIn2d","zoomOut2d","autoScale2d","resetScale2d","hoverClosestCartesian","hoverCompareCartesian","toggleSpikelines",""]},"source":"A","attrs":{"fe0a57395f1d":{"x":{},"type":"bar"}},"cur_data":"fe0a57395f1d","visdat":{"fe0a57395f1d":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-700e2388af74c141ff3f" style="width:504px;height:288px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-700e2388af74c141ff3f">{"x":{"data":[{"orientation":"v","width":[0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033246,0.316498347033217,0.316498347033217],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[88.9360355163356,89.2525338633688,89.5690322104021,89.8855305574353,90.2020289044685,90.5185272515017,90.8350255985349,91.1515239455682,91.4680222926014,91.7845206396346,92.1010189866678,92.4175173337011,92.7340156807343,93.0505140277675,93.3670123748007,93.683510721834,94.0000090688672,94.3165074159004,94.6330057629336,94.9495041099669,95.2660024570001,95.5825008040333,95.8989991510665,96.2154974980997,96.531995845133,96.8484941921662,97.1649925391994,97.4814908862326,97.7979892332659,98.1144875802991],"y":[1,0,0,0,0,0,0,0,0,3,0,0,0,0,0,7,2,0,0,6,43,5,14,4,11,0,2,0,1,1],"text":["count:  1<br />value: 88.93604","count:  0<br />value: 89.25253","count:  0<br />value: 89.56903","count:  0<br />value: 89.88553","count:  0<br />value: 90.20203","count:  0<br />value: 90.51853","count:  0<br />value: 90.83503","count:  0<br />value: 91.15152","count:  0<br />value: 91.46802","count:  3<br />value: 91.78452","count:  0<br />value: 92.10102","count:  0<br />value: 92.41752","count:  0<br />value: 92.73402","count:  0<br />value: 93.05051","count:  0<br />value: 93.36701","count:  7<br />value: 93.68351","count:  2<br />value: 94.00001","count:  0<br />value: 94.31651","count:  0<br />value: 94.63301","count:  6<br />value: 94.94950","count: 43<br />value: 95.26600","count:  5<br />value: 95.58250","count: 14<br />value: 95.89900","count:  4<br />value: 96.21550","count: 11<br />value: 96.53200","count:  0<br />value: 96.84849","count:  2<br />value: 97.16499","count:  0<br />value: 97.48149","count:  1<br />value: 97.79799","count:  1<br />value: 98.11449"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(255,0,0,0.7)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":56.5147364051474,"r":7.97011207970112,"b":49.813200498132,"l":43.8356164383562},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022},"title":{"text":"Distribution of RSS from 100 Model Fits","font":{"color":"rgba(117,117,117,1)","family":"sans","size":26.5670402656704},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[88.3030388222692,98.7474842743655],"tickmode":"array","ticktext":["90","92","94","96","98"],"tickvals":[90,92,94,96,98],"categoryorder":"array","categoryarray":["90","92","94","96","98"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.98505603985056,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.724555643609193,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.724555643609193,"zeroline":false,"anchor":"y","title":{"text":"RSS","font":{"color":"rgba(102,102,102,1)","family":"sans","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-2.15,45.15],"tickmode":"array","ticktext":["0","10","20","30","40"],"tickvals":[0,10,20,30,40],"categoryorder":"array","categoryarray":["0","10","20","30","40"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.98505603985056,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.724555643609193,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(102,102,102,1)","family":"sans","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"transparent","width":0.724555643609193,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":2.06156048675734,"font":{"color":"rgba(117,117,117,1)","family":"sans","size":15.9402241594022}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false,"collaborate":false,"displaylogo":false,"modeBarButtonsToRemove":["sendDataToCloud","zoom2d","pan2d","select2d","lasso2d","zoomIn2d","zoomOut2d","autoScale2d","resetScale2d","hoverClosestCartesian","hoverCompareCartesian","toggleSpikelines",""]},"source":"A","attrs":{"103a12e46a2ff":{"x":{},"type":"bar"}},"cur_data":"103a12e46a2ff","visdat":{"103a12e46a2ff":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 &lt;/center&gt;
 
 ---
@@ -355,7 +355,7 @@ best_nn
 
 
 ```
-## Best Value: 91.8121
+## Best RSS Value: 89.0786
 ```
 
 - Our `best_nn` model has 11 parameters or weights (The parameters are shown on the next slide)
@@ -391,11 +391,11 @@ summary(best_nn)
 ## a 3-2-1 network with 11 weights
 ## options were - linear output units 
 ##  b-&gt;h1 i1-&gt;h1 i2-&gt;h1 i3-&gt;h1 
-##  -1.16   0.63  -0.42   0.44 
+##  -1.14   0.95  -0.83  -0.28 
 ##  b-&gt;h2 i1-&gt;h2 i2-&gt;h2 i3-&gt;h2 
-## -13.11  -2.46  -8.72   3.30 
+##  35.90 -18.32  63.10  34.91 
 ##   b-&gt;o  h1-&gt;o  h2-&gt;o 
-##  -1.10   3.93  -1.28
+##  -1.83   4.51   0.69
 ```
 
 --
@@ -442,7 +442,7 @@ name: drawbacks
 ```
 
 ```
-## [1] 0.7209359
+## [1] 0.7292443
 ```
 
 - This is a similar to the additive model fit for these predictors that Faraway fits in previous chapters
@@ -453,7 +453,7 @@ name: weight_interpretation
 
 # Weight Interpretation
 
-&lt;img src="index_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
 
 - Although the NN weights may be difficult to interpret, we can get some sense of the effect of the predictors by observing the marginal effect of changes in one or more predictor as other predictors are held fixed
 
@@ -470,7 +470,7 @@ name: weight_interpretation
 
 # Weight Interpretation
 
-&lt;img src="index_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
 
 - As seen in the plots there are large discontinuities in the lines plots. This does not follow the linear trend we are expecting
 
@@ -492,6 +492,9 @@ name: improve_fit
 # Improving the Fit
 
 - We can use a penalty function, as with smoothing splines, to obtain a more stable fit.
+
+--
+
 - Instead of minimizing MSE, we minimize: `\(MSE + \lambda \sum\limits_{i} w_i^2\)`
 
 --
@@ -504,7 +507,7 @@ name: improve_fit
 
 
 ```r
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results_decay &lt;- 1:100 %&gt;%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, `decay = 0.001`))
@@ -515,8 +518,6 @@ best_decay_index &lt;- results_decay %&gt;%
 ## select best model
 best_decay &lt;- results[[best_decay_index]]
 ```
-
---
 
 
 
@@ -534,12 +535,12 @@ best_decay$value
 ## [1] 91.8121
 ```
 
-- Our previous value was 91.8121, our new RSS is a little bit higher. This is expected because we are sacrificing some of the fit for a more stable result
+- Our previous value was 89.0786, our new RSS is a little bit higher. This is expected because we are sacrificing some of the fit for a more stable result
 
 --
 
 .pull-left[
-&lt;img src="index_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
@@ -566,11 +567,11 @@ summary(best_decay)
 ## a 3-2-1 network with 11 weights
 ## options were - linear output units 
 ##  b-&gt;h1 i1-&gt;h1 i2-&gt;h1 i3-&gt;h1 
-##  -1.16   0.63  -0.42   0.44 
+##   1.16  -0.63   0.42  -0.44 
 ##  b-&gt;h2 i1-&gt;h2 i2-&gt;h2 i3-&gt;h2 
-## -13.11  -2.46  -8.72   3.30 
-##   b-&gt;o  h1-&gt;o  h2-&gt;o 
-##  -1.10   3.93  -1.28
+##  13.09   2.46   8.71  -3.30 
+##  b-&gt;o h1-&gt;o h2-&gt;o 
+##  1.55 -3.93  1.28
 ```
 
 - The weights of the second row are not as extreme now
@@ -591,7 +592,7 @@ name: final_model
 
 
 ```r
-set.seed(1991)
+set.seed(2019)
 ## fit 100 nn models
 results &lt;- 1:100 %&gt;%
   map(~nnet(O3 ~ ., scale_ozone, size = 4, linout = TRUE, trace = FALSE))
@@ -624,15 +625,15 @@ summary(best_model)
 ## a 9-4-1 network with 45 weights
 ## options were - linear output units 
 ##  b-&gt;h1 i1-&gt;h1 i2-&gt;h1 i3-&gt;h1 i4-&gt;h1 i5-&gt;h1 i6-&gt;h1 i7-&gt;h1 i8-&gt;h1 i9-&gt;h1 
-##   1.61  -0.07   0.82  -1.05  -1.04   1.03  -0.55   0.11  -0.37  -0.32 
+##  -1.47   0.29  -0.36   0.40   0.35  -0.29   0.49   0.29   0.15  -0.02 
 ##  b-&gt;h2 i1-&gt;h2 i2-&gt;h2 i3-&gt;h2 i4-&gt;h2 i5-&gt;h2 i6-&gt;h2 i7-&gt;h2 i8-&gt;h2 i9-&gt;h2 
-##   1.88  -4.60   2.70  -2.86  -3.19   0.91  -1.25  -3.29   2.39   0.57 
+##  40.19   6.03  15.36 -17.61 -13.86  17.07 -22.75   7.20  -6.12 -22.51 
 ##  b-&gt;h3 i1-&gt;h3 i2-&gt;h3 i3-&gt;h3 i4-&gt;h3 i5-&gt;h3 i6-&gt;h3 i7-&gt;h3 i8-&gt;h3 i9-&gt;h3 
-##  -1.32   1.81  -1.64   2.11   2.22  -1.73   0.22  -0.94   0.35   0.10 
+## -11.16  -8.76  11.96   3.34   8.17  -1.90 -11.21  17.59 -25.30  -5.20 
 ##  b-&gt;h4 i1-&gt;h4 i2-&gt;h4 i3-&gt;h4 i4-&gt;h4 i5-&gt;h4 i6-&gt;h4 i7-&gt;h4 i8-&gt;h4 i9-&gt;h4 
-##   3.37   0.60   1.28  -1.37  -0.83   1.62  -1.79   0.25  -0.56  -1.48 
-##  b-&gt;o h1-&gt;o h2-&gt;o h3-&gt;o h4-&gt;o 
-##  4.30 -7.25 -1.38 -3.16  3.42
+##  38.72   6.96  13.35 -22.89 -34.75   9.49   5.97   7.99  -4.86   1.02 
+##   b-&gt;o  h1-&gt;o  h2-&gt;o  h3-&gt;o  h4-&gt;o 
+##  -1.47   3.60   1.03   0.53  -0.62
 ```
 
 `\(R^2\)` estimate:
@@ -643,7 +644,7 @@ summary(best_model)
 ```
 
 ```
-## [1] 0.8223103
+## [1] 0.8314248
 ```
 
 ---
