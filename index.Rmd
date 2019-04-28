@@ -2,7 +2,7 @@
 title: "Introduction to Neural Networks"
 subtitle: "PBHL-B385 Contemporary Regression"
 author: "<br>Kyle Harris <br><i class='fab fa-twitter'></i> <i class='fab fa-instagram'></i> <i class='fab fa-github'></i> @KoderKow"
-date: "<br>Follow Along: **http://bit.ly/B385-NN**"
+date: "<i class='fas fa-globe'></i> https://koderkow.rbind.io<br>Follow Along: **http://bit.ly/B385-NN**"
 output:
   xaringan::moon_reader:
     fig_catption: yes
@@ -647,6 +647,12 @@ name: conclusion
     <figcaption><a href="https://giphy.com/explore/media">Image Source</a></figcaption>
   </figure>
 ]
-
-## Source Code for Slides
+.pull-left[
+### Source Code for Slides
 - https://github.com/KoderKow/B385-nerual-networks
+]
+
+.pull-right[
+### Slides Made with Xaringan
+- [R Package: Xaringan](https://github.com/yihui/xaringan)
+]
