@@ -21,10 +21,22 @@ output:
 ---
 
 ```{r, include=FALSE}
+# libaries
 library(nnet)
 library(tidyverse)
 library(ggthemes)
 library(glue)
+library(plotly)
+
+# functions
+custom_plotly <- function(p) {
+  p %>% 
+    config(collaborate = FALSE,
+           displaylogo = FALSE,
+           modeBarButtonsToRemove = list("sendDataToCloud", "zoom2d", "pan2d", "select2d", "lasso2d", "zoomIn2d", "zoomOut2d", "autoScale2d", "resetScale2d", "hoverClosestCartesian", "hoverCompareCartesian", "toggleSpikelines", ""))
+}
+
+# options
 options(htmltools.dir.version = FALSE)
 ```
 
@@ -256,15 +268,17 @@ data(ozone, package = "faraway")
 --
 
 ```{r, results="hidden", message=FALSE, error=FALSE}
-set.seed(2019)
+set.seed(1991)
 nnet_model <- nnet(O3 ~ temp + ibh + ibt, ozone,
-                   size = 2, linout = TRUE, trace = FALSE)
+                   size = 2, linout = TRUE, trace = TRUE)
 ```
 
 - nnet() fits a single-hidden-layer neural network
-- `formula = O3 ~ temp + ibh + ibt`
-- `data = ozone`
+- `formula = O3 ~ temp + ibh + ibt`: formula interface
+- `data = ozone`: data where the formula variables reside
 - `size = 2`: number of neurons in the hidden layer (this can be optimized)
+- `linout = TRUE`: tells the model that it will have lienar output units
+- `trace = TRUE`: prints out optimization information
 
 ---
 
@@ -299,7 +313,7 @@ scale_ozone <- scale(ozone)
 # NN Application
 
 ```{r, results="hide"}
-set.seed(2019)
+set.seed(1991)
 ## fit 100 nn models
 results <- 1:100 %>%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE))
@@ -311,15 +325,20 @@ best_model_index <- results %>%
 best_nn <- results[[best_model_index]]
 ```
 
+<center>
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.height=4, fig.align="center"}
-results %>%
+p <- results %>%
   map_dbl(~.x$value) %>% 
   as_tibble() %>% 
   ggplot(aes(value)) +
-    geom_histogram(fill = "red", color = "black", alpha = 0.8) +
+    geom_histogram(fill = "red", color = "black", alpha = 0.7) +
     theme_gdocs() +
-    labs(x = "RSS", y = "Count")
+    labs(x = "RSS", y = "Count", title = "Distribution of RSS from 100 Model Fits")
+
+ggplotly(p) %>% 
+  custom_plotly()
 ```
+</center>
 
 ---
 
@@ -481,7 +500,7 @@ name: improve_fit
 - Lets set $\lambda = 0.001$ and create 100 models again
 
 ```{r, eval=FALSE}
-set.seed(2019)
+set.seed(1991)
 ## fit 100 nn models
 results_decay <- 1:100 %>%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, `decay = 0.001`))
@@ -496,7 +515,7 @@ best_decay <- results[[best_decay_index]]
 --
 
 ```{r, echo=FALSE}
-set.seed(2019)
+set.seed(1991)
 ## fit 100 nn models
 results_decay <- 1:100 %>%
   map(~nnet(O3 ~ temp + ibh + ibt, scale_ozone, size = 2, linout = TRUE, trace = FALSE, decay = 0.001))
@@ -574,7 +593,7 @@ name: final_model
 # Final Model Fit
 
 ```{r}
-set.seed(2019)
+set.seed(1991)
 ## fit 100 nn models
 results <- 1:100 %>%
   map(~nnet(O3 ~ ., scale_ozone, size = 4, linout = TRUE, trace = FALSE))
@@ -600,6 +619,21 @@ $R^2$ estimate:
 ```{r}
 1 - best_model$value / sum((scale_ozone[,1] - mean(scale_ozone))^2)
 ```
+
+---
+
+# In Class Exercise
+
+1. Get your computers out and install `nnet()`
+
+--
+
+.center[
+<figure>
+    <img src="https://media0.giphy.com/media/l46Cz3nhIKEQYwBK8/giphy.gif" />
+    <figcaption><a href="https://giphy.com/explore/media">Image Source</a></figcaption>
+</figure>
+]
 
 ---
 
@@ -645,7 +679,7 @@ name: conclusion
 <figure>
     <img src="https://media.giphy.com/media/6tHy8UAbv3zgs/giphy.gif" />
     <figcaption><a href="https://giphy.com/explore/media">Image Source</a></figcaption>
-  </figure>
+</figure>
 ]
 .pull-left[
 ### Source Code for Slides
