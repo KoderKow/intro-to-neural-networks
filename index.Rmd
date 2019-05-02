@@ -2,7 +2,7 @@
 title: "Introduction to Neural Networks"
 subtitle: "PBHL-B385 Contemporary Regression"
 author: "<br>Kyle Harris <br><i class='fab fa-twitter'></i> <i class='fab fa-instagram'></i> <i class='fab fa-github'></i> @KoderKow"
-date: "<i class='fas fa-globe'></i> https://koderkow.rbind.io<br>Follow Along: **http://bit.ly/B385-NN**"
+date: "<i class='fas fa-globe'></i> https://koderkow.rbind.io<br>Follow Along: **http://bit.ly/intro-to-neural-networks**"
 output:
   xaringan::moon_reader:
     fig_catption: yes
@@ -56,7 +56,7 @@ options(htmltools.dir.version = FALSE)
   - [Final Model Fit](#final_model)
 - [Conclusion](#conclusion)
   
-Follow Along: **http://bit.ly/B385-NN**
+Follow Along: **http://bit.ly/intro-to-neural-networks**
 
 ---
 
@@ -691,7 +691,7 @@ name: conclusion
 ]
 .pull-left[
 ### Source Code for Slides
-- https://github.com/KoderKow/B385-nerual-networks
+- https://github.com/KoderKow/intro-to-neural-networks
 ]
 
 .pull-right[
