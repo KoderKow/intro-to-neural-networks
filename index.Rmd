@@ -630,21 +630,6 @@ $R^2$ estimate:
 
 ---
 
-# In Class Exercise
-
-1. Get your computers out and install `nnet()`
-
---
-
-.center[
-<figure>
-    <img src="https://media0.giphy.com/media/l46Cz3nhIKEQYwBK8/giphy.gif" />
-    <figcaption><a href="https://giphy.com/explore/media">Image Source</a></figcaption>
-</figure>
-]
-
----
-
 name: conclusion
 
 # Conclusion
